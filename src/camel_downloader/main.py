@@ -168,12 +168,19 @@ def download_video(url, choice):
     # Run `termux-setup-storage` once to enable ~/storage/downloads.
     is_termux = 'TERMUX_VERSION' in os.environ or os.path.exists('/data/data/com.termux')
     if is_termux:
-        termux_storage = os.path.expanduser("~/storage/downloads")
-        if os.path.exists(os.path.expanduser("~/storage")):
-            download_dir = os.path.join(termux_storage, "camelDownloader")
+        if os.path.exists(os.path.expanduser("~/storage/downloads")):
+            # termux-setup-storage was run — use the symlink to public Downloads
+            download_dir = os.path.expanduser("~/storage/downloads/camelDownloader")
+        elif os.path.exists("/sdcard/Download"):
+            # Direct path to Android's public Downloads folder
+            download_dir = "/sdcard/Download/camelDownloader"
+        elif os.path.exists("/storage/emulated/0/Download"):
+            download_dir = "/storage/emulated/0/Download/camelDownloader"
         else:
+            # Nothing is accessible — prompt user to grant storage permission
             download_dir = os.path.expanduser("~/downloads/camelDownloader")
-            print("💡 Tip: Run `termux-setup-storage` so downloads appear in Android's file manager")
+            print("⚠️  Downloads are going to a hidden folder.")
+            print("💡 Fix: Run `termux-setup-storage` in Termux and tap Allow.")
     else:
         download_dir = os.path.expanduser("~/Downloads/camelDownloader")
     
