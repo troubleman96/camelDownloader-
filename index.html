@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>camelDownloader — Free Terminal YouTube Downloader</title>
-<meta name="description" content="Free, open-source YouTube downloader for Linux, macOS, Android (Termux), and Windows. Download any video in 360p to 4K or extract MP3 audio from your terminal.">
+<title>camelDownloader — General Purpose Terminal Downloader</title>
+<meta name="description" content="Free, open-source downloader for YouTube, TikTok, HTTP files, torrents and 1000+ sites. Runs in your terminal on Linux, macOS, Android (Termux), and Windows.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -596,16 +596,16 @@ footer{
       <!-- Left: Copy -->
       <div class="hero-copy">
         <div class="hero-badge">🆓 Free & Open Source — MIT</div>
-        <h1>Download YouTube videos from <span class="grad">your terminal</span></h1>
+        <h1>Download <span class="grad">anything</span> from your terminal</h1>
         <p class="lead">
-          No browser extensions. No ads. No limits. One command gets you any YouTube video from 360p all the way up to 4K — or just the MP3. Works on Linux, macOS, Android, and Windows.
+          No browser extensions. No ads. No limits. Paste any link — YouTube, TikTok, direct files, magnet links, torrents — and it just downloads. Works on Linux, macOS, Android, and Windows.
         </p>
         <div class="hero-actions">
           <a href="#install" class="btn-lg btn-amber">Get Started Free</a>
           <a href="https://github.com/troubleman96/camelDownloader-" class="btn-lg btn-outline" target="_blank" rel="noopener">View on GitHub</a>
         </div>
         <div class="hero-stats">
-          <div class="stat"><span class="stat-num">7</span><span class="stat-label">Quality Options</span></div>
+          <div class="stat"><span class="stat-num">1000+</span><span class="stat-label">Supported Sites</span></div>
           <div class="stat"><span class="stat-num">4K</span><span class="stat-label">Max Resolution</span></div>
           <div class="stat"><span class="stat-num">4</span><span class="stat-label">Platforms</span></div>
           <div class="stat"><span class="stat-num">10×</span><span class="stat-label">Auto Retry</span></div>
@@ -625,26 +625,26 @@ footer{
           <div class="terminal-body" id="terminalDemo">
             <div class="t-amber">════════════════════════════════════════════</div>
             <div class="t-amber">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; camelDownloader 🐫</div>
-            <div class="t-amber">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Production YouTube Downloader</div>
+            <div class="t-amber">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; General Purpose Downloader</div>
             <div class="t-amber">════════════════════════════════════════════</div>
             <div>&nbsp;</div>
-            <div><span class="t-blue">🔗 Enter YouTube URL:</span> <span class="t-txt">https://youtu.be/dQw4w9WgXcQ</span></div>
+            <div><span class="t-blue">🔗 Paste your link:</span> <span class="t-txt">https://youtu.be/dQw4w9WgXcQ</span></div>
             <div>&nbsp;</div>
-            <div class="t-txt">🔍 Fetching video information...</div>
+            <div><span class="t-green">✅ Detected:</span> <span class="t-txt">🎬 Media / YouTube</span></div>
+            <div>&nbsp;</div>
+            <div class="t-txt">🔍 Fetching info...</div>
             <div class="t-gray">────────────────────────────────────────</div>
-            <div><span class="t-amber">📹 Title:</span> <span class="t-txt">Never Gonna Give You Up</span></div>
-            <div><span class="t-amber">👤 Uploader:</span> <span class="t-txt">Rick Astley</span></div>
-            <div><span class="t-amber">⏱️ &nbsp;Duration:</span> <span class="t-txt">3:33</span></div>
-            <div><span class="t-amber">📊 Available:</span> <span class="t-txt">1080p, 720p, 480p, 360p</span></div>
+            <div><span class="t-amber">📹</span> <span class="t-txt">Never Gonna Give You Up</span></div>
+            <div><span class="t-amber">👤</span> <span class="t-txt">Rick Astley &nbsp;⏱️ 3:33 &nbsp;👁️ 1.5B views</span></div>
             <div class="t-gray">────────────────────────────────────────</div>
             <div>&nbsp;</div>
             <div><span class="t-blue">👉 Your choice (1-7):</span> <span class="t-txt">3</span></div>
-            <div><span class="t-green">✅ Selected:</span> <span class="t-txt">1080p (Full HD)</span></div>
+            <div><span class="t-green">✅ Quality:</span> <span class="t-txt">1080p (Full HD)</span></div>
             <div>&nbsp;</div>
             <div class="t-txt">⬇️&nbsp; 78.3% | 45.2MB/57.8MB | <span class="t-green">3.2MiB/s</span> | ETA: 4s</div>
             <div>&nbsp;</div>
             <div><span class="t-green">✅ DOWNLOAD COMPLETE!</span></div>
-            <div><span class="t-amber">📁 Location:</span> <span class="t-txt">~/Downloads/camelDownloader</span></div>
+            <div><span class="t-amber">📁</span> <span class="t-txt">~/Downloads/camelDownloader</span></div>
             <div><span class="cursor"></span></div>
           </div>
         </div>
@@ -660,7 +660,7 @@ footer{
   <div class="container">
     <div class="section-header">
       <h2>Everything you need, <span class="grad">nothing you don't</span></h2>
-      <p>Built on yt-dlp — the most powerful YouTube download engine available — wrapped in a simple, friendly terminal interface.</p>
+      <p>One command handles YouTube, TikTok, direct files, torrents, and 1000+ sites — auto-detected, no flags needed.</p>
     </div>
     <div class="features-grid">
       <div class="feature-card">
@@ -689,9 +689,14 @@ footer{
         <p>Real-time display of download speed, percentage complete, bytes downloaded, and estimated time remaining.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🌍</div>
-        <h3>Geo-Bypass</h3>
-        <p>Automatically attempts to bypass geographic restrictions so you can access videos regardless of your region.</p>
+        <div class="feature-icon">🌐</div>
+        <h3>Direct HTTP Downloads</h3>
+        <p>Paste any direct file link (.zip, .mp4, .pdf, etc.) and it downloads immediately with a real-time progress bar.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧲</div>
+        <h3>Torrent &amp; Magnet Links</h3>
+        <p>Paste a magnet link or .torrent URL — camel connects to DHT, fetches metadata, and downloads the file.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">📱</div>
@@ -700,8 +705,8 @@ footer{
       </div>
       <div class="feature-card">
         <div class="feature-icon">🤖</div>
-        <h3>True CLI Command</h3>
-        <p>Run <code style="color:var(--amber);background:rgba(245,166,35,.08);padding:1px 6px;border-radius:4px">camel-downloader</code> or the shorter <code style="color:var(--amber);background:rgba(245,166,35,.08);padding:1px 6px;border-radius:4px">camel</code> alias from any terminal window on your system.</p>
+        <h3>Auto-Detection</h3>
+        <p>Just paste and go. <code style="color:var(--amber);background:rgba(245,166,35,.08);padding:1px 6px;border-radius:4px">camel</code> identifies the link type automatically — no flags, no subcommands needed.</p>
       </div>
     </div>
   </div>
@@ -719,28 +724,28 @@ footer{
     <div class="steps-grid">
       <div class="step-card">
         <div class="step-num">1</div>
-        <h3>Paste URL</h3>
-        <p>Enter any YouTube link — regular, short, or playlist.</p>
+        <h3>Run <code style="font-size:.9rem">camel</code></h3>
+        <p>Open any terminal and type <code>camel</code>. The banner appears and it waits for a link.</p>
       </div>
       <div class="step-card">
         <div class="step-num">2</div>
-        <h3>Fetch Metadata</h3>
-        <p>yt-dlp reads the video title, duration, views, and available resolutions.</p>
+        <h3>Paste Any Link</h3>
+        <p>YouTube, TikTok, Twitter, a direct file URL, or a magnet link — anything works.</p>
       </div>
       <div class="step-card">
         <div class="step-num">3</div>
-        <h3>Pick Quality</h3>
-        <p>Choose from 7 options: 360p to 4K video, or MP3 audio-only.</p>
+        <h3>Auto-Detection</h3>
+        <p>camel classifies the link and routes it: media → quality menu, HTTP → instant download, torrent → DHT fetch.</p>
       </div>
       <div class="step-card">
         <div class="step-num">4</div>
-        <h3>Download Streams</h3>
-        <p>YouTube stores HD video and audio separately — both are downloaded simultaneously.</p>
+        <h3>Download</h3>
+        <p>For media, pick quality (1–7). For files and torrents it starts immediately with live progress.</p>
       </div>
       <div class="step-card">
         <div class="step-num">5</div>
-        <h3>Merge &amp; Save</h3>
-        <p>FFmpeg merges them into a single MP4 (or MKV for 4K) and saves it to your Downloads folder.</p>
+        <h3>Done</h3>
+        <p>File saved to your Downloads folder. Download another or type <code>q</code> to quit.</p>
       </div>
     </div>
   </div>
@@ -781,9 +786,11 @@ footer{
         <h3><span class="step-badge">1</span> Update system &amp; install prerequisites</h3>
         <div class="code-block">
           <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
-          <pre><span class="comment"># Update package list and install Python, pip, and FFmpeg</span>
+          <pre><span class="comment"># Update and install Python, pip, and FFmpeg</span>
 <span class="cmd">sudo apt update</span>
-<span class="cmd">sudo apt install python3 python3-pip ffmpeg -y</span></pre>
+<span class="cmd">sudo apt install python3 python3-pip ffmpeg -y</span>
+<span class="comment"># Optional: torrent & magnet link support</span>
+<span class="cmd">sudo apt install python3-libtorrent -y</span></pre>
         </div>
       </div>
       <div class="install-step">
@@ -794,14 +801,14 @@ footer{
         </div>
       </div>
       <div class="install-step">
-        <h3><span class="step-badge">3</span> Make the command globally available <span style="font-size:.8rem;font-weight:400;color:var(--txt3)">(run once)</span></h3>
+        <h3><span class="step-badge">3</span> Add to PATH if needed <span style="font-size:.8rem;font-weight:400;color:var(--txt3)">(run once)</span></h3>
         <div class="code-block">
           <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
-          <pre><span class="cmd">mkdir -p ~/.local/bin</span>
-<span class="cmd">ln -sf $(which camel-downloader) ~/.local/bin/camel-downloader</span></pre>
+          <pre><span class="cmd">echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc</span>
+<span class="cmd">source ~/.bashrc</span></pre>
         </div>
         <div class="callout callout-info mt-12">
-          If <code style="color:var(--blue)">camel-downloader</code> is still not found, add it to your PATH permanently:
+          If <code style="color:var(--blue)">camel</code> is still not found, add it to your PATH permanently:
           <div class="code-block" style="margin-top:10px">
             <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
             <pre><span class="cmd">echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc</span>
@@ -813,9 +820,7 @@ footer{
         <h3><span class="step-badge">4</span> Verify installation</h3>
         <div class="code-block">
           <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
-          <pre><span class="cmd">camel-downloader</span>
-<span class="comment"># or use the short alias:</span>
-<span class="cmd">camel</span></pre>
+          <pre><span class="cmd">camel</span></pre>
         </div>
         <div class="callout callout-tip mt-12">Downloads are saved to <code style="color:var(--green)">~/Downloads/camelDownloader/</code></div>
       </div>
@@ -849,7 +854,7 @@ footer{
         <h3><span class="step-badge">4</span> Verify installation</h3>
         <div class="code-block">
           <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
-          <pre><span class="cmd">camel-downloader</span></pre>
+          <pre><span class="cmd">camel</span></pre>
         </div>
         <div class="callout callout-tip mt-12">Downloads are saved to <code style="color:var(--green)">~/Downloads/camelDownloader/</code></div>
       </div>
@@ -891,7 +896,7 @@ footer{
         <h3><span class="step-badge">4</span> Verify and run</h3>
         <div class="code-block">
           <div class="code-header"><span class="code-label">termux</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
-          <pre><span class="cmd">camel-downloader</span></pre>
+          <pre><span class="cmd">camel</span></pre>
         </div>
         <div class="callout callout-tip mt-12">After downloading, open the <strong>Files</strong> app on Android → <strong>Downloads → camelDownloader</strong> to find your file.</div>
       </div>
@@ -929,7 +934,7 @@ footer{
         <h3><span class="step-badge">3</span> Verify installation</h3>
         <div class="code-block">
           <div class="code-header"><span class="code-label">command prompt</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
-          <pre><span class="cmd">camel-downloader</span></pre>
+          <pre><span class="cmd">camel</span></pre>
         </div>
         <div class="callout callout-tip mt-12">Downloads are saved to <code style="color:var(--green)">C:\Users\YourName\Downloads\camelDownloader\</code></div>
       </div>
@@ -958,7 +963,7 @@ footer{
         <h3><span class="step-badge">3</span> Verify</h3>
         <div class="code-block">
           <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
-          <pre><span class="cmd">camel-downloader</span></pre>
+          <pre><span class="cmd">camel</span></pre>
         </div>
       </div>
     </div>
@@ -981,31 +986,29 @@ footer{
           <div class="usage-step-num">1</div>
           <div class="usage-step-content">
             <h3>Launch the app</h3>
-            <p>Open any terminal and type the command. A banner appears confirming it's ready.</p>
-            <div class="alias-badge">camel-downloader</div>
-            <span style="color:var(--txt3);margin:0 8px;font-size:.85rem">or</span>
+            <p>Open any terminal and type the command. The banner appears and it waits for a link.</p>
             <div class="alias-badge">camel</div>
           </div>
         </div>
         <div class="usage-step">
           <div class="usage-step-num">2</div>
           <div class="usage-step-content">
-            <h3>Paste the YouTube URL</h3>
-            <p>Copy any YouTube link from your browser and paste it at the prompt. The tool shows you the video title, uploader, duration, and available resolutions.</p>
+            <h3>Paste any link</h3>
+            <p>YouTube, TikTok, Twitter, a direct file, or a magnet link — paste it and press Enter. camel detects the type automatically.</p>
           </div>
         </div>
         <div class="usage-step">
           <div class="usage-step-num">3</div>
           <div class="usage-step-content">
-            <h3>Choose your quality (1–7)</h3>
-            <p>Type a number and press Enter. The download starts immediately with live progress updates showing speed, percentage, and ETA.</p>
+            <h3>Pick quality (media only)</h3>
+            <p>For YouTube/TikTok/media links, choose 1–7. For direct files and torrents, download starts immediately — no menu needed.</p>
           </div>
         </div>
         <div class="usage-step">
           <div class="usage-step-num">✓</div>
           <div class="usage-step-content">
             <h3>Done — find your file</h3>
-            <p>The file is saved automatically to your Downloads folder under a <code style="color:var(--amber);font-size:.85rem">camelDownloader</code> subfolder. No extra steps.</p>
+            <p>Saved automatically to your Downloads folder under <code style="color:var(--amber);font-size:.85rem">camelDownloader/</code>. No extra steps.</p>
           </div>
         </div>
       </div>
@@ -1020,30 +1023,27 @@ footer{
             <div class="terminal-title">bash — usage demo</div>
           </div>
           <div class="terminal-body" style="font-size:.8rem">
-            <div class="t-gray"># Launch with either command:</div>
-            <div><span class="t-prompt"></span><span class="t-amber">camel-downloader</span></div>
+            <div><span class="t-prompt"></span><span class="t-amber">camel</span></div>
             <div>&nbsp;</div>
             <div class="t-amber">════════════════════════════════════</div>
-            <div class="t-amber">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; camelDownloader 🐫</div>
+            <div class="t-amber">&nbsp;&nbsp; camelDownloader 🐫</div>
+            <div class="t-amber">&nbsp; General Purpose Downloader</div>
             <div class="t-amber">════════════════════════════════════</div>
             <div>&nbsp;</div>
-            <div><span class="t-blue">🔗 Enter YouTube URL:</span></div>
+            <div><span class="t-blue">🔗 Paste your link:</span></div>
             <div class="t-txt">&nbsp; https://youtu.be/dQw4w9WgXcQ</div>
+            <div>&nbsp;</div>
+            <div><span class="t-green">✅ Detected:</span> <span class="t-txt">🎬 Media / YouTube</span></div>
             <div>&nbsp;</div>
             <div class="t-gray">────────────────────────────────────</div>
             <div><span class="t-amber">📊 SELECT QUALITY:</span></div>
             <div class="t-gray">────────────────────────────────────</div>
-            <div class="t-txt">1) 360p  - SD       (Small, fast)</div>
-            <div class="t-txt">2) 720p  - HD       (Balanced)</div>
-            <div class="t-txt">3) 1080p - Full HD  (High quality)</div>
-            <div class="t-txt">4) 1440p - 2K       (Very high)</div>
-            <div class="t-txt">5) 2160p - 4K       (Maximum)</div>
-            <div class="t-txt">6) Best  - Auto     (Auto-pick)</div>
-            <div class="t-txt">7) Audio - MP3      (Sound only)</div>
+            <div class="t-txt">1) 360p (SD) &nbsp; 2) 720p (HD)</div>
+            <div class="t-txt">3) 1080p &nbsp;&nbsp;&nbsp;&nbsp; 4) 1440p (2K)</div>
+            <div class="t-txt">5) 4K &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6) Best &nbsp; 7) MP3</div>
             <div class="t-gray">────────────────────────────────────</div>
             <div>&nbsp;</div>
             <div><span class="t-blue">👉 Your choice (1-7):</span> <span class="t-amber">7</span></div>
-            <div><span class="t-green">✅ Selected:</span> <span class="t-txt">Audio Only (MP3)</span></div>
             <div>&nbsp;</div>
             <div class="t-txt">⬇️&nbsp; 100% | 3.2MB/3.2MB | <span class="t-green">Done</span></div>
             <div class="t-green">✅ DOWNLOAD COMPLETE!</div>
@@ -1220,7 +1220,7 @@ footer{
 
       <div class="accordion-item" onclick="toggleAccordion(this)">
         <div class="accordion-header">
-          <span class="accordion-q"><code style="color:var(--red);font-size:.9rem">camel-downloader: command not found</code></span>
+          <span class="accordion-q"><code style="color:var(--red);font-size:.9rem">camel: command not found</code></span>
           <span class="accordion-icon">+</span>
         </div>
         <div class="accordion-body">
@@ -1228,9 +1228,7 @@ footer{
             The command is installed but not on your PATH. Run these commands to fix it:
             <div class="code-block" style="margin-top:12px">
               <div class="code-header"><span class="code-label">Linux / macOS</span><button class="copy-btn" onclick="copyCode(this);event.stopPropagation()"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
-              <pre><span class="cmd">mkdir -p ~/.local/bin</span>
-<span class="cmd">ln -sf $(which camel-downloader) ~/.local/bin/camel-downloader</span>
-<span class="cmd">echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc</span>
+              <pre><span class="cmd">echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc</span>
 <span class="cmd">source ~/.bashrc</span></pre>
             </div>
             On Android (Termux) this shouldn't happen after a successful <code>pip install</code>. Try closing and reopening Termux.
@@ -1323,6 +1321,26 @@ footer{
 
       <div class="accordion-item" onclick="toggleAccordion(this)">
         <div class="accordion-header">
+          <span class="accordion-q"><code style="color:var(--red);font-size:.9rem">libtorrent not installed</code> when using magnet links</span>
+          <span class="accordion-icon">+</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            Torrent and magnet link support requires libtorrent. Install it:
+            <div class="code-block" style="margin-top:12px">
+              <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this);event.stopPropagation()"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+              <pre><span class="comment"># Ubuntu / Debian (recommended)</span>
+<span class="cmd">sudo apt install python3-libtorrent</span>
+<span class="comment"># via pip</span>
+<span class="cmd">pip install libtorrent</span></pre>
+            </div>
+            HTTP and media downloads still work without libtorrent — it is only needed for magnet links and .torrent files.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
           <span class="accordion-q">How do I update camelDownloader to the latest version?</span>
           <span class="accordion-icon">+</span>
         </div>
@@ -1407,7 +1425,7 @@ footer{
           <span style="font-size:1.4rem">🐫</span>
           <span>camelDownloader</span>
         </div>
-        <p>Free, open-source YouTube downloader for Linux, macOS, Android (Termux), and Windows. Powered by yt-dlp.</p>
+        <p>Free, open-source general purpose downloader — YouTube, TikTok, HTTP files, torrents and 1000+ sites. Linux, macOS, Android & Windows.</p>
       </div>
       <div class="footer-col">
         <h4>Navigation</h4>
@@ -1436,7 +1454,7 @@ footer{
       <div class="footer-badges">
         <span class="badge">Python 3.8+</span>
         <span class="badge">MIT License</span>
-        <span class="badge">v2.1.1</span>
+        <span class="badge">v3.0.0</span>
       </div>
     </div>
   </div>
