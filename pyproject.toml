@@ -17,6 +17,7 @@ dependencies = [
 ]
 
 [project.scripts]
+camel-downloader = "camel_downloader.main:main"
 camel = "camel_downloader.main:main"
 
 [tool.setuptools.packages.find]

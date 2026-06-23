@@ -4,43 +4,70 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![yt-dlp](https://img.shields.io/badge/powered%20by-yt--dlp-FF0000.svg)](https://github.com/yt-dlp/yt-dlp)
 
-**camelDownloader** is a production-ready, high-performance YouTube downloader designed for simplicity and reliability. It provides a clean CLI interface to download videos in any resolution (up to 4K) or extract high-quality audio with ease.
+**camelDownloader** is a production-ready YouTube downloader with a global CLI — run `camel-downloader` from any terminal, on any platform, without activating a virtual environment.
 
 ---
 
 ## ✨ Key Features
 
-- 📺 **All Resolutions Support**: Choose from 360p up to 2160p (4K).
-- 🎵 **Smart Audio Extraction**: One-click MP3 conversion at 192kbps.
-- 🚀 **No Quality Loss**: Uses smart merging (MP4/MKV) without forced re-encoding.
-- 🛠️ **Built for Stability**: 10x auto-retry on network failures and geographic bypass support.
-- 📊 **Clean Progress UI**: Real-time download speed, ETA, and file size tracking.
-- 📁 **Organized Downloads**: Automatically saves to `~/Downloads/camelDownloader`.
+- 📺 **All Resolutions**: 360p, 720p, 1080p, 1440p, 4K — your choice.
+- 🎵 **Audio Extraction**: One-click MP3 conversion at 192kbps.
+- 🚀 **No Quality Loss**: Smart MP4/MKV merging with no forced re-encoding.
+- 🛠️ **Built for Stability**: 10x auto-retry on network failures, geo-bypass support.
+- 📊 **Live Progress**: Real-time speed, ETA, and file size in the terminal.
+- 📁 **Organized Saves**: Downloads go to `~/Downloads/camelDownloader` (or Android's public Downloads on Termux).
+- 🤖 **Global CLI**: One command — `camel-downloader` — works from anywhere after install.
 
 ---
 
 ## 📋 Prerequisites
 
-Before installing, ensure you have the following requirements:
-
 1. **Python 3.8+**
-2. **FFmpeg**: Required for merging video/audio streams and audio extraction.
-   - **Ubuntu/Debian**: `sudo apt install ffmpeg`
-   - **macOS**: `brew install ffmpeg`
-   - **Termux**: `pkg install ffmpeg`
-   - **Windows**: [Download from ffmpeg.org](https://ffmpeg.org/download.html)
+2. **FFmpeg** — required for merging video and audio streams.
+
+| Platform       | Install command                                    |
+|----------------|----------------------------------------------------|
+| Ubuntu / Debian | `sudo apt install ffmpeg`                         |
+| macOS          | `brew install ffmpeg`                              |
+| Termux         | `pkg install ffmpeg`                               |
+| Windows        | [ffmpeg.org/download](https://ffmpeg.org/download.html) |
 
 ---
 
 ## 🚀 Installation
 
-### via PyPI (Recommended)
+### Ubuntu / Debian / macOS
 
 ```bash
 pip install camelDownloader
 ```
 
-### from Source
+Make the command available globally (only needed once):
+
+```bash
+mkdir -p ~/.local/bin
+ln -sf $(which camel-downloader) ~/.local/bin/camel-downloader
+```
+
+> `~/.local/bin` is already in `$PATH` on most Linux/macOS systems. If not, add
+> `export PATH="$HOME/.local/bin:$PATH"` to your `~/.bashrc` or `~/.zshrc`.
+
+### Termux (Android)
+
+```bash
+# 1. Install system dependencies
+pkg update && pkg install python ffmpeg
+
+# 2. Install the package
+pip install camelDownloader
+
+# 3. (One-time) Grant storage access so files appear in Android's file manager
+termux-setup-storage
+```
+
+Downloads will be saved to `~/storage/downloads/camelDownloader` (Android's public Downloads folder).
+
+### From Source
 
 ```bash
 git clone https://github.com/troubleman96/camel-Downloader.git
@@ -52,42 +79,69 @@ pip install .
 
 ## 🎮 Usage
 
-Simply run the command from any terminal:
-
 ```bash
-camel
+camel-downloader
 ```
 
+`camel` works as a short alias too.
+
 Follow the interactive prompts:
-1. Paste your **YouTube URL**.
-2. Select your desired **Quality** (1-7).
-3. Sit back and relax! 🐫
+
+```
+🔗 Enter YouTube URL: https://www.youtube.com/watch?v=...
+
+📊 SELECT QUALITY:
+1) 360p  - SD       (Small file, fast download)
+2) 720p  - HD       (Balanced quality and size)
+3) 1080p - Full HD  (High quality, larger file)
+4) 1440p - 2K       (Very high quality)
+5) 2160p - 4K       (Maximum quality, huge file)
+6) Best  - Auto     (Let YouTube decide best quality)
+7) Audio - MP3      (Sound only, ~3MB per minute)
+
+👉 Your choice (1-7):
+```
+
+---
+
+## ⚙️ How the CLI Works
+
+The `camel-downloader` command is registered as a Python **entry point** in `pyproject.toml`:
+
+```toml
+[project.scripts]
+camel-downloader = "camel_downloader.main:main"
+camel            = "camel_downloader.main:main"
+```
+
+When pip installs the package it generates a real executable script at
+`<env>/bin/camel-downloader` that calls `main()` directly — no manual script needed.
+Symlinking that file into `~/.local/bin` (which is in `$PATH`) makes it reachable
+from any terminal without activating a virtual environment.
 
 ---
 
 ## 🛠️ Project Structure
 
-```text
-camel-Downloader/
+```
+camel-downloader/
 ├── src/
 │   └── camel_downloader/
 │       ├── __init__.py
-│       └── main.py          # Core logic & CLI
-├── pyproject.toml           # Build system & dependencies
-├── README.md                # Project documentation
-└── setup.py                 # Package shim
+│       └── main.py          # Core logic & CLI entry point
+├── pyproject.toml           # Build config, dependencies & CLI entry points
+├── setup.py                 # Minimal setuptools shim
+└── README.md
 ```
 
 ---
 
 ## 🤝 Contributing
 
-This is an open-source project. Feel free to:
-- Open issues for bugs or feature requests.
-- Submit Pull Requests to improve the code or documentation.
+Open issues for bugs or feature requests, or submit a Pull Request.
 
 ---
 
 ## 📜 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License.

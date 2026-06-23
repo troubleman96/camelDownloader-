@@ -163,7 +163,19 @@ def download_video(url, choice):
     # ─────────────────────────────────────────────────────────
     # STEP 1: Setup download directory
     # ─────────────────────────────────────────────────────────
-    download_dir = os.path.expanduser("~/Downloads/camelDownloader")
+    # Termux: use ~/storage/downloads so files appear in Android's
+    # public Downloads folder. Falls back to ~/Downloads otherwise.
+    # Run `termux-setup-storage` once to enable ~/storage/downloads.
+    is_termux = 'TERMUX_VERSION' in os.environ or os.path.exists('/data/data/com.termux')
+    if is_termux:
+        termux_storage = os.path.expanduser("~/storage/downloads")
+        if os.path.exists(os.path.expanduser("~/storage")):
+            download_dir = os.path.join(termux_storage, "camelDownloader")
+        else:
+            download_dir = os.path.expanduser("~/downloads/camelDownloader")
+            print("💡 Tip: Run `termux-setup-storage` so downloads appear in Android's file manager")
+    else:
+        download_dir = os.path.expanduser("~/Downloads/camelDownloader")
     
     try:
         os.makedirs(download_dir, exist_ok=True)
@@ -344,7 +356,9 @@ def check_dependencies():
         import yt_dlp
     except ImportError:
         print("❌ yt-dlp not installed")
-        print("📦 Install: pip install -U yt-dlp")
+        print("📦 Install:")
+        print("   Ubuntu/Debian/macOS: pip install -U yt-dlp")
+        print("   Termux:              pip install yt-dlp")
         return False
     
     # Check ffmpeg (required for merging)
