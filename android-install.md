@@ -22,12 +22,13 @@ Install the APK. Allow "Install from unknown sources" when prompted.
 Open Termux and paste this:
 
 ```bash
-pkg update -y && pkg upgrade -y && pkg install python ffmpeg openssl -y && pip install camelDownloader
+pkg update -y && pkg upgrade -y && pkg install python ffmpeg openssl aria2 -y && pip install camelDownloader
 ```
 
-This installs Python, FFmpeg, OpenSSL, and camelDownloader in one go.
+This installs Python, FFmpeg, OpenSSL, aria2 (for torrent/magnet support), and camelDownloader in one go.
 
 ---
+
 
 ## Step 3 — Grant storage access (one time only)
 
@@ -49,7 +50,7 @@ Paste any link at the prompt and press Enter. It auto-detects the type:
 
 - **YouTube / TikTok / Twitter / Instagram / Vimeo** → shows quality menu (1–7)
 - **Direct file link** → downloads immediately
-- Magnet/torrent links are not supported on Android (libtorrent is unavailable in Termux)
+- **Magnet links & .torrent files** → downloads via aria2c (installed in Step 2)
 
 ---
 

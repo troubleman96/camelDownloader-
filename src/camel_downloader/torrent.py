@@ -1,3 +1,5 @@
+import shutil
+import subprocess
 import tempfile
 import time
 from pathlib import Path
@@ -15,20 +17,63 @@ console = Console()
 
 
 def download_torrent(source: str, output_dir: Path, seed_after: bool = False) -> bool:
+    ensure_output_dir(output_dir)
+
     try:
         import libtorrent as lt
+        return _download_libtorrent(source, output_dir, seed_after, lt)
     except ImportError:
-        console.print("[red]✗ libtorrent not installed.[/]")
-        console.print("  Ubuntu/Debian: [dim]sudo apt install python3-libtorrent[/]")
-        console.print("  pip:           [dim]pip install libtorrent[/]")
+        pass
+
+    if shutil.which("aria2c"):
+        return _download_aria2(source, output_dir)
+
+    console.print("[red]✗ No torrent backend found.[/]")
+    console.print("\n[bold]Install one of the following:[/]")
+    console.print("  Android/Termux: [dim]pkg install aria2[/]")
+    console.print("  Ubuntu/Debian:  [dim]sudo apt install python3-libtorrent[/]")
+    console.print("  macOS:          [dim]brew install aria2[/]")
+    console.print("  Windows:        [dim]winget install aria2[/]  [bold]or[/]  [dim]pip install libtorrent[/]")
+    return False
+
+
+# ── aria2c backend ────────────────────────────────────────────
+
+def _download_aria2(source: str, output_dir: Path) -> bool:
+    console.print("\n[bold yellow]🧲  Torrent Download[/] [dim](via aria2c)[/]")
+    console.print(f"[bold]Save:[/]  {output_dir}\n")
+
+    cmd = [
+        "aria2c",
+        "--dir", str(output_dir),
+        "--seed-time=0",          # don't seed after finish
+        "--max-connection-per-server=4",
+        "--split=4",
+        "--console-log-level=warn",
+        "--summary-interval=3",
+        source,
+    ]
+
+    try:
+        result = subprocess.run(cmd, check=True)
+        console.print(f"\n[green]✓ Download complete:[/] {output_dir}")
+        return result.returncode == 0
+
+    except subprocess.CalledProcessError as e:
+        console.print(f"[red]✗ aria2c error (exit {e.returncode})[/]")
+        return False
+    except KeyboardInterrupt:
+        console.print("\n[yellow]⚠️  Download cancelled (Ctrl+C).[/]")
         return False
 
+
+# ── libtorrent backend ────────────────────────────────────────
+
+def _download_libtorrent(source: str, output_dir: Path, seed_after: bool, lt) -> bool:
     console.print("\n[bold yellow]🧲  Torrent Download[/]")
-    ensure_output_dir(output_dir)
 
     ses = lt.session()
     ses.listen_on(6881, 6891)
-
     ses.add_dht_router("router.bittorrent.com", 6881)
     ses.add_dht_router("router.utorrent.com", 6881)
     ses.add_dht_router("dht.transmissionbt.com", 6881)
@@ -47,7 +92,6 @@ def download_torrent(source: str, output_dir: Path, seed_after: bool = False) ->
     if source.startswith("magnet:"):
         console.print("[dim]Adding magnet link…[/]")
         handle = lt.add_magnet_uri(ses, source, params)
-
         console.print("[dim]Fetching torrent metadata via DHT…[/]")
         with console.status("[yellow]Waiting for peers/metadata…[/]", spinner="dots"):
             start = time.time()
@@ -107,7 +151,6 @@ def download_torrent(source: str, output_dir: Path, seed_after: bool = False) ->
                 up="0B/s",
                 peers=0,
             )
-
             while True:
                 s = handle.status()
                 progress.update(
@@ -116,18 +159,14 @@ def download_torrent(source: str, output_dir: Path, seed_after: bool = False) ->
                     up=fmt_bytes(s.upload_rate) + "/s",
                     peers=s.num_peers,
                 )
-
                 if s.is_seeding or s.state == lt.torrent_status.seeding:
                     progress.update(task, completed=size or s.total_done)
                     break
-
                 time.sleep(1)
 
         console.print(f"[green]✓ Torrent complete:[/] {output_dir / name}")
-
         if not seed_after:
             ses.remove_torrent(handle)
-
         return True
 
     except KeyboardInterrupt:
