@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>camelDownloader — Free Terminal YouTube Downloader</title>
+<meta name="description" content="Free, open-source YouTube downloader for Linux, macOS, Android (Termux), and Windows. Download any video in 360p to 4K or extract MP3 audio from your terminal.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Inter',sans-serif;background:#080810;color:#e8e8f0;line-height:1.6;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+
+/* ── Design Tokens ── */
+:root{
+  --bg:         #080810;
+  --bg1:        #0d0d1a;
+  --bg2:        #12121f;
+  --bg3:        #181828;
+  --border:     #22223a;
+  --border2:    #2e2e4a;
+  --amber:      #f5a623;
+  --amber-dim:  #c47d0e;
+  --amber-glow: rgba(245,166,35,0.15);
+  --orange:     #ff6b35;
+  --green:      #4ade80;
+  --blue:       #60a5fa;
+  --purple:     #a78bfa;
+  --red:        #f87171;
+  --txt:        #e8e8f0;
+  --txt2:       #9898b8;
+  --txt3:       #5a5a7a;
+  --radius:     12px;
+  --radius-lg:  20px;
+  --shadow:     0 4px 24px rgba(0,0,0,0.5);
+  --shadow-lg:  0 8px 48px rgba(0,0,0,0.7);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── Typography ── */
+h1,h2,h3,h4{line-height:1.2;letter-spacing:-0.02em}
+code,pre,kbd,.mono{font-family:'JetBrains Mono',monospace}
+
+/* ── Layout ── */
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+.section{padding:96px 0}
+.section-sm{padding:64px 0}
+
+/* ── Gradient Text ── */
+.grad{background:linear-gradient(135deg,#f5a623 0%,#ff6b35 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ── Glow Effects ── */
+.glow-amber{box-shadow:0 0 40px rgba(245,166,35,0.2),0 0 80px rgba(245,166,35,0.08)}
+.glow-text{text-shadow:0 0 40px rgba(245,166,35,0.4)}
+
+/* ════════════════════════════════════════════
+   NAV
+════════════════════════════════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:0 24px;
+  background:rgba(8,8,16,0.8);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  transition:all .3s;
+}
+.nav-inner{
+  max-width:1100px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  height:64px;
+}
+.nav-logo{
+  display:flex;align-items:center;gap:10px;
+  font-size:1.1rem;font-weight:700;
+}
+.nav-logo .camel-icon{font-size:1.4rem}
+.nav-logo span{color:var(--amber)}
+.nav-links{
+  display:flex;align-items:center;gap:32px;
+  list-style:none;
+}
+.nav-links a{
+  font-size:.9rem;font-weight:500;color:var(--txt2);
+  transition:color .2s;
+}
+.nav-links a:hover{color:var(--txt)}
+.nav-cta{
+  display:flex;align-items:center;gap:12px;
+}
+.btn-ghost{
+  padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:500;
+  border:1px solid var(--border2);color:var(--txt2);
+  transition:all .2s;
+}
+.btn-ghost:hover{border-color:var(--amber);color:var(--amber)}
+.btn-primary{
+  padding:8px 20px;border-radius:8px;font-size:.875rem;font-weight:600;
+  background:var(--amber);color:#080810;
+  transition:all .2s;
+}
+.btn-primary:hover{background:#fdb94a;transform:translateY(-1px);box-shadow:0 4px 20px rgba(245,166,35,0.4)}
+
+/* Mobile menu */
+.nav-hamburger{display:none;flex-direction:column;gap:5px;padding:8px;cursor:pointer}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--txt2);border-radius:2px;transition:all .3s}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger.open span:nth-child(2){opacity:0}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+.mobile-menu{
+  display:none;position:fixed;top:64px;left:0;right:0;
+  background:var(--bg1);border-bottom:1px solid var(--border);
+  padding:24px;flex-direction:column;gap:16px;z-index:99;
+}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-size:1rem;font-weight:500;color:var(--txt2);padding:8px 0;border-bottom:1px solid var(--border)}
+.mobile-menu a:last-child{border:none}
+
+/* ════════════════════════════════════════════
+   HERO
+════════════════════════════════════════════ */
+.hero{
+  min-height:100vh;display:flex;align-items:center;
+  padding-top:80px;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(245,166,35,0.08) 0%,transparent 60%);
+  pointer-events:none;
+}
+.hero-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:64px;align-items:center;width:100%;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 14px;border-radius:100px;
+  background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.2);
+  font-size:.8rem;font-weight:600;color:var(--amber);
+  margin-bottom:24px;
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.hero h1{
+  font-size:clamp(2.4rem,5vw,3.6rem);
+  font-weight:900;margin-bottom:20px;
+}
+.hero p.lead{
+  font-size:1.15rem;color:var(--txt2);line-height:1.7;
+  margin-bottom:36px;max-width:520px;
+}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:48px}
+.btn-lg{
+  padding:14px 28px;border-radius:10px;font-size:1rem;font-weight:600;
+  transition:all .2s;
+}
+.btn-amber{
+  background:var(--amber);color:#080810;
+}
+.btn-amber:hover{background:#fdb94a;transform:translateY(-2px);box-shadow:0 6px 30px rgba(245,166,35,0.45)}
+.btn-outline{
+  border:1px solid var(--border2);color:var(--txt);
+  background:rgba(255,255,255,0.03);
+}
+.btn-outline:hover{border-color:var(--border);background:rgba(255,255,255,0.06)}
+.hero-stats{
+  display:flex;gap:32px;flex-wrap:wrap;
+}
+.stat{display:flex;flex-direction:column}
+.stat-num{font-size:1.5rem;font-weight:800;color:var(--amber)}
+.stat-label{font-size:.8rem;color:var(--txt3);font-weight:500}
+
+/* ── Terminal Window ── */
+.terminal-window{
+  background:#0e0e1b;
+  border:1px solid var(--border2);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  box-shadow:var(--shadow-lg),0 0 60px rgba(245,166,35,0.06);
+}
+.terminal-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:14px 16px;
+  background:#111120;border-bottom:1px solid var(--border);
+}
+.terminal-dots{display:flex;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%}
+.dot.red{background:#ff5f56}
+.dot.yellow{background:#ffbd2e}
+.dot.green{background:#27c93f}
+.terminal-title{
+  flex:1;text-align:center;font-size:.78rem;
+  color:var(--txt3);font-family:'JetBrains Mono',monospace;
+}
+.terminal-body{
+  padding:20px;font-family:'JetBrains Mono',monospace;
+  font-size:.82rem;line-height:1.8;min-height:320px;
+}
+.t-amber{color:var(--amber)}
+.t-green{color:var(--green)}
+.t-blue{color:var(--blue)}
+.t-gray{color:var(--txt3)}
+.t-txt{color:var(--txt)}
+.t-prompt::before{content:'$ ';color:var(--amber)}
+.cursor{
+  display:inline-block;width:8px;height:1em;
+  background:var(--amber);animation:blink 1s step-end infinite;
+  vertical-align:middle;margin-left:2px;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ════════════════════════════════════════════
+   FEATURES
+════════════════════════════════════════════ */
+.features-bg{background:var(--bg1)}
+.section-header{text-align:center;margin-bottom:56px}
+.section-header h2{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:800;margin-bottom:12px}
+.section-header p{font-size:1.05rem;color:var(--txt2);max-width:540px;margin:0 auto}
+.features-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:16px;
+}
+.feature-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px;
+  transition:all .25s;position:relative;overflow:hidden;
+}
+.feature-card::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(245,166,35,0.03) 0%,transparent 60%);
+  opacity:0;transition:opacity .3s;
+}
+.feature-card:hover{border-color:rgba(245,166,35,0.3);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+.feature-card:hover::after{opacity:1}
+.feature-icon{
+  font-size:2rem;margin-bottom:16px;
+  display:flex;align-items:center;justify-content:center;
+  width:52px;height:52px;border-radius:12px;
+  background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.12);
+}
+.feature-card h3{font-size:1.05rem;font-weight:700;margin-bottom:8px}
+.feature-card p{font-size:.9rem;color:var(--txt2);line-height:1.6}
+
+/* ════════════════════════════════════════════
+   HOW IT WORKS
+════════════════════════════════════════════ */
+.steps-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:0;position:relative;
+}
+.steps-grid::before{
+  content:'';position:absolute;top:32px;left:10%;right:10%;
+  height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);
+  pointer-events:none;
+}
+.step-card{
+  text-align:center;padding:32px 20px;position:relative;z-index:1;
+}
+.step-num{
+  width:64px;height:64px;border-radius:50%;margin:0 auto 16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;font-weight:800;color:var(--amber);
+  background:var(--bg1);border:2px solid var(--amber-dim);
+  position:relative;z-index:1;
+}
+.step-card h3{font-size:.95rem;font-weight:700;margin-bottom:8px}
+.step-card p{font-size:.84rem;color:var(--txt2)}
+
+/* ════════════════════════════════════════════
+   INSTALL
+════════════════════════════════════════════ */
+.install-bg{background:var(--bg1)}
+.os-tabs{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin-bottom:32px;
+}
+.os-tab{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:10px;font-size:.9rem;font-weight:600;
+  border:1px solid var(--border2);color:var(--txt2);
+  background:var(--bg2);transition:all .2s;
+}
+.os-tab:hover{border-color:var(--border);color:var(--txt)}
+.os-tab.active{
+  background:rgba(245,166,35,0.12);border-color:rgba(245,166,35,0.4);
+  color:var(--amber);
+}
+.os-tab .os-icon{font-size:1.1rem}
+.os-panel{display:none}
+.os-panel.active{display:block}
+
+.install-step{
+  margin-bottom:28px;
+}
+.install-step h3{
+  font-size:1rem;font-weight:700;margin-bottom:12px;
+  display:flex;align-items:center;gap:10px;
+}
+.step-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:26px;height:26px;border-radius:50%;
+  background:var(--amber);color:#080810;font-size:.75rem;font-weight:800;
+  flex-shrink:0;
+}
+.callout{
+  padding:12px 16px;border-radius:8px;margin-top:12px;
+  font-size:.875rem;line-height:1.6;
+}
+.callout-info{background:rgba(96,165,250,0.08);border-left:3px solid var(--blue);color:var(--txt2)}
+.callout-warn{background:rgba(245,166,35,0.08);border-left:3px solid var(--amber);color:var(--txt2)}
+.callout-tip{background:rgba(74,222,128,0.08);border-left:3px solid var(--green);color:var(--txt2)}
+
+/* Code Block */
+.code-block{
+  position:relative;background:#0e0e1b;
+  border:1px solid var(--border2);border-radius:var(--radius);
+  overflow:hidden;
+}
+.code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#111120;
+  border-bottom:1px solid var(--border);
+}
+.code-label{font-size:.75rem;color:var(--txt3);font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.copy-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:4px 12px;border-radius:6px;font-size:.78rem;font-weight:600;
+  border:1px solid var(--border2);color:var(--txt3);
+  background:transparent;transition:all .2s;
+}
+.copy-btn:hover{border-color:var(--amber);color:var(--amber)}
+.copy-btn.copied{border-color:var(--green);color:var(--green)}
+pre{
+  padding:20px;overflow-x:auto;font-size:.83rem;line-height:1.7;
+  color:var(--txt);
+}
+pre .comment{color:var(--txt3)}
+pre .cmd{color:#e8e8f0}
+pre .flag{color:var(--blue)}
+pre .path{color:var(--amber)}
+pre .str{color:var(--green)}
+
+/* ════════════════════════════════════════════
+   USAGE
+════════════════════════════════════════════ */
+.usage-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.usage-steps{display:flex;flex-direction:column;gap:24px}
+.usage-step{display:flex;gap:16px;align-items:flex-start}
+.usage-step-num{
+  width:36px;height:36px;flex-shrink:0;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:.9rem;
+  background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.25);color:var(--amber);
+}
+.usage-step-content h3{font-size:1rem;font-weight:700;margin-bottom:4px}
+.usage-step-content p{font-size:.9rem;color:var(--txt2)}
+.alias-badge{
+  display:inline-block;padding:3px 10px;border-radius:6px;
+  background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);
+  font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--purple);
+  margin-top:6px;
+}
+
+/* ════════════════════════════════════════════
+   QUALITY OPTIONS
+════════════════════════════════════════════ */
+.quality-bg{background:var(--bg1)}
+.quality-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.quality-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:22px;
+  transition:all .25s;position:relative;
+}
+.quality-card:hover{border-color:rgba(245,166,35,0.3);transform:translateY(-2px)}
+.quality-card.featured{
+  border-color:rgba(245,166,35,0.35);
+  background:rgba(245,166,35,0.04);
+}
+.quality-num{
+  font-size:.75rem;font-weight:700;color:var(--amber);
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;
+}
+.quality-res{font-size:1.4rem;font-weight:800;margin-bottom:2px}
+.quality-label{font-size:.85rem;color:var(--txt3);margin-bottom:12px}
+.quality-bar{
+  height:4px;border-radius:2px;background:var(--bg3);
+  margin-bottom:12px;overflow:hidden;
+}
+.quality-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--amber-dim),var(--amber))}
+.quality-meta{font-size:.82rem;color:var(--txt2)}
+.quality-meta span{display:block}
+.quality-size{color:var(--amber);font-weight:600;font-family:'JetBrains Mono',monospace}
+.tag-audio{
+  position:absolute;top:14px;right:14px;
+  padding:3px 10px;border-radius:20px;
+  background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);
+  font-size:.72rem;font-weight:700;color:var(--green);
+  text-transform:uppercase;letter-spacing:.06em;
+}
+
+/* ════════════════════════════════════════════
+   DOWNLOAD LOCATIONS
+════════════════════════════════════════════ */
+.locations-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.location-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:24px;transition:all .25s;
+}
+.location-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.location-os{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.location-os-icon{font-size:1.6rem}
+.location-os-name{font-size:1rem;font-weight:700}
+.location-path{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  background:var(--bg);border:1px solid var(--border);border-radius:8px;
+  padding:10px 14px;margin-top:8px;
+}
+.location-path code{font-size:.78rem;color:var(--amber);word-break:break-all}
+.location-copy{
+  padding:4px;color:var(--txt3);transition:color .2s;flex-shrink:0;
+}
+.location-copy:hover{color:var(--amber)}
+
+/* ════════════════════════════════════════════
+   TROUBLESHOOTING
+════════════════════════════════════════════ */
+.trouble-bg{background:var(--bg1)}
+.accordion{display:flex;flex-direction:column;gap:8px}
+.accordion-item{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;transition:border-color .2s;
+}
+.accordion-item.open{border-color:rgba(245,166,35,0.3)}
+.accordion-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;cursor:pointer;gap:16px;
+  transition:background .2s;
+}
+.accordion-header:hover{background:rgba(255,255,255,0.02)}
+.accordion-q{font-size:.97rem;font-weight:600;color:var(--txt)}
+.accordion-icon{
+  width:24px;height:24px;flex-shrink:0;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--border2);color:var(--txt2);
+  font-size:.9rem;transition:all .3s;
+}
+.accordion-item.open .accordion-icon{
+  background:rgba(245,166,35,0.1);border-color:rgba(245,166,35,0.3);
+  color:var(--amber);transform:rotate(45deg);
+}
+.accordion-body{
+  max-height:0;overflow:hidden;transition:max-height .3s ease;
+}
+.accordion-body-inner{
+  padding:0 24px 20px;color:var(--txt2);font-size:.9rem;line-height:1.7;
+}
+.accordion-item.open .accordion-body{max-height:600px}
+
+/* ════════════════════════════════════════════
+   CONTRIBUTING
+════════════════════════════════════════════ */
+.contrib-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.contrib-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:28px;transition:all .25s;text-align:center;
+}
+.contrib-card:hover{border-color:var(--border2);transform:translateY(-3px)}
+.contrib-icon{font-size:2.5rem;margin-bottom:16px}
+.contrib-card h3{font-size:1.05rem;font-weight:700;margin-bottom:8px}
+.contrib-card p{font-size:.9rem;color:var(--txt2);margin-bottom:20px}
+.contrib-card a{
+  display:inline-block;padding:9px 20px;border-radius:8px;
+  font-size:.875rem;font-weight:600;
+  border:1px solid var(--border2);color:var(--txt2);
+  transition:all .2s;
+}
+.contrib-card a:hover{border-color:var(--amber);color:var(--amber)}
+
+/* ════════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════════ */
+footer{
+  background:var(--bg1);border-top:1px solid var(--border);
+  padding:48px 0 32px;
+}
+.footer-grid{
+  display:grid;grid-template-columns:1.5fr 1fr 1fr;
+  gap:48px;margin-bottom:48px;
+}
+.footer-brand{max-width:300px}
+.footer-logo{
+  display:flex;align-items:center;gap:10px;
+  font-size:1.1rem;font-weight:700;margin-bottom:12px;
+}
+.footer-logo span{color:var(--amber)}
+.footer-brand p{font-size:.875rem;color:var(--txt2);line-height:1.6}
+.footer-col h4{font-size:.85rem;font-weight:700;color:var(--txt2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col ul a{font-size:.875rem;color:var(--txt3);transition:color .2s}
+.footer-col ul a:hover{color:var(--amber)}
+.footer-bottom{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:24px;border-top:1px solid var(--border);
+  flex-wrap:wrap;gap:12px;
+}
+.footer-copy{font-size:.82rem;color:var(--txt3)}
+.footer-badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{
+  padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;
+  border:1px solid var(--border2);color:var(--txt3);
+}
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════ */
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  .hero-terminal-col{order:-1}
+  .usage-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .steps-grid::before{display:none}
+  .nav-links,.nav-cta{display:none}
+  .nav-hamburger{display:flex}
+}
+@media(max-width:600px){
+  .section{padding:64px 0}
+  .hero{padding-top:80px;min-height:auto;padding-bottom:48px}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;align-items:flex-start}
+  .os-tabs{flex-direction:column}
+  .os-tab{justify-content:flex-start}
+  .hero-actions{flex-direction:column}
+  .btn-lg{text-align:center;width:100%}
+  .quality-grid{grid-template-columns:1fr 1fr}
+  .steps-grid{grid-template-columns:1fr}
+}
+
+/* ── Utility ── */
+.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}.mt-24{margin-top:24px}
+.text-center{text-align:center}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     NAV
+══════════════════════════════════════════ -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <span class="camel-icon">🐫</span>
+      <span>camelDownloader</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#install">Install</a></li>
+      <li><a href="#usage">Usage</a></li>
+      <li><a href="#quality">Quality</a></li>
+      <li><a href="#troubleshoot">Help</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="https://github.com/troubleman96/camelDownloader-" class="btn-ghost" target="_blank" rel="noopener">GitHub</a>
+      <a href="#install" class="btn-primary">Install Now</a>
+    </div>
+    <div class="nav-hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#features" onclick="closeMenu()">Features</a>
+  <a href="#install" onclick="closeMenu()">Install</a>
+  <a href="#usage" onclick="closeMenu()">Usage</a>
+  <a href="#quality" onclick="closeMenu()">Quality</a>
+  <a href="#troubleshoot" onclick="closeMenu()">Troubleshoot</a>
+  <a href="https://github.com/troubleman96/camelDownloader-" target="_blank" rel="noopener">GitHub ↗</a>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HERO
+══════════════════════════════════════════ -->
+<section class="hero" id="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <!-- Left: Copy -->
+      <div class="hero-copy">
+        <div class="hero-badge">🆓 Free & Open Source — MIT</div>
+        <h1>Download YouTube videos from <span class="grad">your terminal</span></h1>
+        <p class="lead">
+          No browser extensions. No ads. No limits. One command gets you any YouTube video from 360p all the way up to 4K — or just the MP3. Works on Linux, macOS, Android, and Windows.
+        </p>
+        <div class="hero-actions">
+          <a href="#install" class="btn-lg btn-amber">Get Started Free</a>
+          <a href="https://github.com/troubleman96/camelDownloader-" class="btn-lg btn-outline" target="_blank" rel="noopener">View on GitHub</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><span class="stat-num">7</span><span class="stat-label">Quality Options</span></div>
+          <div class="stat"><span class="stat-num">4K</span><span class="stat-label">Max Resolution</span></div>
+          <div class="stat"><span class="stat-num">4</span><span class="stat-label">Platforms</span></div>
+          <div class="stat"><span class="stat-num">10×</span><span class="stat-label">Auto Retry</span></div>
+        </div>
+      </div>
+      <!-- Right: Terminal -->
+      <div class="hero-terminal-col">
+        <div class="terminal-window glow-amber">
+          <div class="terminal-bar">
+            <div class="terminal-dots">
+              <div class="dot red"></div>
+              <div class="dot yellow"></div>
+              <div class="dot green"></div>
+            </div>
+            <div class="terminal-title">bash — camelDownloader</div>
+          </div>
+          <div class="terminal-body" id="terminalDemo">
+            <div class="t-amber">════════════════════════════════════════════</div>
+            <div class="t-amber">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; camelDownloader 🐫</div>
+            <div class="t-amber">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Production YouTube Downloader</div>
+            <div class="t-amber">════════════════════════════════════════════</div>
+            <div>&nbsp;</div>
+            <div><span class="t-blue">🔗 Enter YouTube URL:</span> <span class="t-txt">https://youtu.be/dQw4w9WgXcQ</span></div>
+            <div>&nbsp;</div>
+            <div class="t-txt">🔍 Fetching video information...</div>
+            <div class="t-gray">────────────────────────────────────────</div>
+            <div><span class="t-amber">📹 Title:</span> <span class="t-txt">Never Gonna Give You Up</span></div>
+            <div><span class="t-amber">👤 Uploader:</span> <span class="t-txt">Rick Astley</span></div>
+            <div><span class="t-amber">⏱️ &nbsp;Duration:</span> <span class="t-txt">3:33</span></div>
+            <div><span class="t-amber">📊 Available:</span> <span class="t-txt">1080p, 720p, 480p, 360p</span></div>
+            <div class="t-gray">────────────────────────────────────────</div>
+            <div>&nbsp;</div>
+            <div><span class="t-blue">👉 Your choice (1-7):</span> <span class="t-txt">3</span></div>
+            <div><span class="t-green">✅ Selected:</span> <span class="t-txt">1080p (Full HD)</span></div>
+            <div>&nbsp;</div>
+            <div class="t-txt">⬇️&nbsp; 78.3% | 45.2MB/57.8MB | <span class="t-green">3.2MiB/s</span> | ETA: 4s</div>
+            <div>&nbsp;</div>
+            <div><span class="t-green">✅ DOWNLOAD COMPLETE!</span></div>
+            <div><span class="t-amber">📁 Location:</span> <span class="t-txt">~/Downloads/camelDownloader</span></div>
+            <div><span class="cursor"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FEATURES
+══════════════════════════════════════════ -->
+<section class="section features-bg" id="features">
+  <div class="container">
+    <div class="section-header">
+      <h2>Everything you need, <span class="grad">nothing you don't</span></h2>
+      <p>Built on yt-dlp — the most powerful YouTube download engine available — wrapped in a simple, friendly terminal interface.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📺</div>
+        <h3>All Resolutions</h3>
+        <p>360p, 720p, 1080p, 1440p (2K), and 2160p (4K). Always picks the best available stream for the quality you choose.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎵</div>
+        <h3>MP3 Audio Extraction</h3>
+        <p>Download audio-only as a 192kbps MP3. Perfect for music, podcasts, lectures, and anything you just need to hear.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h3>No Quality Loss</h3>
+        <p>Video and audio streams are merged without re-encoding. AV1 and VP9 codecs are preserved exactly as YouTube stores them.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <h3>10× Auto-Retry</h3>
+        <p>Automatically retries failed fragments and connections up to 10 times. Unstable Wi-Fi or mobile data? No problem.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Live Progress</h3>
+        <p>Real-time display of download speed, percentage complete, bytes downloaded, and estimated time remaining.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <h3>Geo-Bypass</h3>
+        <p>Automatically attempts to bypass geographic restrictions so you can access videos regardless of your region.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>Android (Termux)</h3>
+        <p>Full support for Android via Termux. Downloads land directly in your public Downloads folder — no root needed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>True CLI Command</h3>
+        <p>Run <code style="color:var(--amber);background:rgba(245,166,35,.08);padding:1px 6px;border-radius:4px">camel-downloader</code> or the shorter <code style="color:var(--amber);background:rgba(245,166,35,.08);padding:1px 6px;border-radius:4px">camel</code> alias from any terminal window on your system.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     HOW IT WORKS
+══════════════════════════════════════════ -->
+<section class="section" id="how">
+  <div class="container">
+    <div class="section-header">
+      <h2>How it <span class="grad">works</span></h2>
+      <p>Under the hood, camelDownloader uses yt-dlp to fetch, download, and merge YouTube streams automatically.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Paste URL</h3>
+        <p>Enter any YouTube link — regular, short, or playlist.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>Fetch Metadata</h3>
+        <p>yt-dlp reads the video title, duration, views, and available resolutions.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>Pick Quality</h3>
+        <p>Choose from 7 options: 360p to 4K video, or MP3 audio-only.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <h3>Download Streams</h3>
+        <p>YouTube stores HD video and audio separately — both are downloaded simultaneously.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <h3>Merge &amp; Save</h3>
+        <p>FFmpeg merges them into a single MP4 (or MKV for 4K) and saves it to your Downloads folder.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     INSTALL
+══════════════════════════════════════════ -->
+<section class="section install-bg" id="install">
+  <div class="container">
+    <div class="section-header">
+      <h2>Installation <span class="grad">guide</span></h2>
+      <p>Pick your platform below for a complete, step-by-step setup guide.</p>
+    </div>
+
+    <!-- OS Tabs -->
+    <div class="os-tabs" role="tablist">
+      <button class="os-tab active" onclick="switchTab('linux')" id="tab-linux">
+        <span class="os-icon">🐧</span> Linux
+      </button>
+      <button class="os-tab" onclick="switchTab('macos')" id="tab-macos">
+        <span class="os-icon">🍎</span> macOS
+      </button>
+      <button class="os-tab" onclick="switchTab('android')" id="tab-android">
+        <span class="os-icon">📱</span> Android (Termux)
+      </button>
+      <button class="os-tab" onclick="switchTab('windows')" id="tab-windows">
+        <span class="os-icon">🪟</span> Windows
+      </button>
+      <button class="os-tab" onclick="switchTab('source')" id="tab-source">
+        <span class="os-icon">🔧</span> From Source
+      </button>
+    </div>
+
+    <!-- ── LINUX ── -->
+    <div class="os-panel active" id="panel-linux">
+      <div class="install-step">
+        <h3><span class="step-badge">1</span> Update system &amp; install prerequisites</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="comment"># Update package list and install Python, pip, and FFmpeg</span>
+<span class="cmd">sudo apt update</span>
+<span class="cmd">sudo apt install python3 python3-pip ffmpeg -y</span></pre>
+        </div>
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">2</span> Install camelDownloader via pip</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="cmd">pip install camelDownloader</span></pre>
+        </div>
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">3</span> Make the command globally available <span style="font-size:.8rem;font-weight:400;color:var(--txt3)">(run once)</span></h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="cmd">mkdir -p ~/.local/bin</span>
+<span class="cmd">ln -sf $(which camel-downloader) ~/.local/bin/camel-downloader</span></pre>
+        </div>
+        <div class="callout callout-info mt-12">
+          If <code style="color:var(--blue)">camel-downloader</code> is still not found, add it to your PATH permanently:
+          <div class="code-block" style="margin-top:10px">
+            <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+            <pre><span class="cmd">echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc</span>
+<span class="cmd">source ~/.bashrc</span></pre>
+          </div>
+        </div>
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">4</span> Verify installation</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="cmd">camel-downloader</span>
+<span class="comment"># or use the short alias:</span>
+<span class="cmd">camel</span></pre>
+        </div>
+        <div class="callout callout-tip mt-12">Downloads are saved to <code style="color:var(--green)">~/Downloads/camelDownloader/</code></div>
+      </div>
+    </div>
+
+    <!-- ── macOS ── -->
+    <div class="os-panel" id="panel-macos">
+      <div class="install-step">
+        <h3><span class="step-badge">1</span> Install Homebrew <span style="font-size:.8rem;font-weight:400;color:var(--txt3)">(skip if already installed)</span></h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="cmd">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span></pre>
+        </div>
+        <div class="callout callout-info mt-12">Homebrew is a free package manager for macOS. It makes installing Python and FFmpeg trivial.</div>
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">2</span> Install Python and FFmpeg</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="cmd">brew install python ffmpeg</span></pre>
+        </div>
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">3</span> Install camelDownloader</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="cmd">pip3 install camelDownloader</span></pre>
+        </div>
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">4</span> Verify installation</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="cmd">camel-downloader</span></pre>
+        </div>
+        <div class="callout callout-tip mt-12">Downloads are saved to <code style="color:var(--green)">~/Downloads/camelDownloader/</code></div>
+      </div>
+    </div>
+
+    <!-- ── ANDROID ── -->
+    <div class="os-panel" id="panel-android">
+      <div class="callout callout-warn" style="margin-bottom:28px">
+        <strong style="color:var(--amber)">Requires Termux</strong> — Termux is a free Android terminal emulator that lets you run Linux commands directly on your phone with no root required.
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">1</span> Install Termux from F-Droid</h3>
+        <p style="color:var(--txt2);font-size:.9rem;margin-bottom:12px">
+          The Play Store version is outdated and broken. You <strong>must</strong> download from F-Droid:
+        </p>
+        <div class="callout callout-info">
+          Open your browser on Android and go to: <code style="color:var(--blue)">f-droid.org/en/packages/com.termux/</code>
+          <br>Download and install the APK. Allow "Install from unknown sources" when prompted.
+        </div>
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">2</span> Open Termux and run the one-line installer</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">termux</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="cmd">pkg update -y && pkg upgrade -y && pkg install python ffmpeg openssl -y && pip install camelDownloader</span></pre>
+        </div>
+        <div class="callout callout-info mt-12">This updates Termux, installs Python, FFmpeg, and OpenSSL, then installs camelDownloader — all in one command.</div>
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">3</span> Grant storage permission <span style="font-size:.8rem;font-weight:400;color:var(--txt3)">(one time only)</span></h3>
+        <p style="color:var(--txt2);font-size:.9rem;margin-bottom:12px">This lets your downloads appear in Android's Files app under the public <strong>Downloads</strong> folder:</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">termux</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="cmd">termux-setup-storage</span></pre>
+        </div>
+        <div class="callout callout-warn mt-12">Tap <strong>Allow</strong> when Android asks for storage permission. Without this, files save to a hidden Termux-only folder.</div>
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">4</span> Verify and run</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">termux</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="cmd">camel-downloader</span></pre>
+        </div>
+        <div class="callout callout-tip mt-12">After downloading, open the <strong>Files</strong> app on Android → <strong>Downloads → camelDownloader</strong> to find your file.</div>
+      </div>
+    </div>
+
+    <!-- ── WINDOWS ── -->
+    <div class="os-panel" id="panel-windows">
+      <div class="callout callout-tip" style="margin-bottom:28px">
+        <strong style="color:var(--green)">Quick install with winget</strong> — If you have Windows 10 (updated) or Windows 11, winget is pre-installed. Use the commands below for the fastest setup.
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">1</span> Install Python and FFmpeg via winget</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">command prompt (run as admin)</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="cmd">winget install Python.Python.3 -e</span>
+<span class="cmd">winget install Gyan.FFmpeg -e</span></pre>
+        </div>
+        <div class="callout callout-info mt-12">Winget installs and adds both to PATH automatically. Restart your terminal after this step.</div>
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">1b</span> Manual install <span style="font-size:.8rem;font-weight:400;color:var(--txt3)">(if winget is unavailable)</span></h3>
+        <p style="color:var(--txt2);font-size:.9rem;line-height:1.7">
+          <strong style="color:var(--txt)">Python:</strong> Download from <code style="color:var(--amber)">python.org/downloads</code> — during install, check <strong>"Add Python to PATH"</strong>.<br><br>
+          <strong style="color:var(--txt)">FFmpeg:</strong> Download from <code style="color:var(--amber)">ffmpeg.org/download.html</code> → Extract the zip → Copy the path to the <code>bin</code> folder (e.g. <code>C:\ffmpeg\bin</code>) → Search "Environment Variables" in Start → Edit the <code>Path</code> system variable → Click New and paste the path → click OK on all windows.
+        </p>
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">2</span> Open Command Prompt and install camelDownloader</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">command prompt</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="cmd">pip install camelDownloader</span></pre>
+        </div>
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">3</span> Verify installation</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">command prompt</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="cmd">camel-downloader</span></pre>
+        </div>
+        <div class="callout callout-tip mt-12">Downloads are saved to <code style="color:var(--green)">C:\Users\YourName\Downloads\camelDownloader\</code></div>
+      </div>
+    </div>
+
+    <!-- ── FROM SOURCE ── -->
+    <div class="os-panel" id="panel-source">
+      <div class="callout callout-info" style="margin-bottom:28px">Use this method if you want to run the latest development code, contribute to the project, or try unreleased features.</div>
+      <div class="install-step">
+        <h3><span class="step-badge">1</span> Install prerequisites for your OS first</h3>
+        <p style="color:var(--txt2);font-size:.9rem">Follow the prerequisites from the Linux, macOS, Android, or Windows tab above (you need Python and FFmpeg).</p>
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">2</span> Clone and install</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="comment"># Clone the repository</span>
+<span class="cmd">git clone https://github.com/troubleman96/camelDownloader-.git</span>
+<span class="cmd">cd camelDownloader-</span>
+
+<span class="comment"># Install in editable mode — code changes take effect immediately</span>
+<span class="cmd">pip install -e .</span></pre>
+        </div>
+      </div>
+      <div class="install-step">
+        <h3><span class="step-badge">3</span> Verify</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+          <pre><span class="cmd">camel-downloader</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     USAGE
+══════════════════════════════════════════ -->
+<section class="section" id="usage">
+  <div class="container">
+    <div class="section-header">
+      <h2>How to <span class="grad">use it</span></h2>
+      <p>Three steps. That's all it takes to download any YouTube video.</p>
+    </div>
+    <div class="usage-grid">
+      <div class="usage-steps">
+        <div class="usage-step">
+          <div class="usage-step-num">1</div>
+          <div class="usage-step-content">
+            <h3>Launch the app</h3>
+            <p>Open any terminal and type the command. A banner appears confirming it's ready.</p>
+            <div class="alias-badge">camel-downloader</div>
+            <span style="color:var(--txt3);margin:0 8px;font-size:.85rem">or</span>
+            <div class="alias-badge">camel</div>
+          </div>
+        </div>
+        <div class="usage-step">
+          <div class="usage-step-num">2</div>
+          <div class="usage-step-content">
+            <h3>Paste the YouTube URL</h3>
+            <p>Copy any YouTube link from your browser and paste it at the prompt. The tool shows you the video title, uploader, duration, and available resolutions.</p>
+          </div>
+        </div>
+        <div class="usage-step">
+          <div class="usage-step-num">3</div>
+          <div class="usage-step-content">
+            <h3>Choose your quality (1–7)</h3>
+            <p>Type a number and press Enter. The download starts immediately with live progress updates showing speed, percentage, and ETA.</p>
+          </div>
+        </div>
+        <div class="usage-step">
+          <div class="usage-step-num">✓</div>
+          <div class="usage-step-content">
+            <h3>Done — find your file</h3>
+            <p>The file is saved automatically to your Downloads folder under a <code style="color:var(--amber);font-size:.85rem">camelDownloader</code> subfolder. No extra steps.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="terminal-window">
+          <div class="terminal-bar">
+            <div class="terminal-dots">
+              <div class="dot red"></div>
+              <div class="dot yellow"></div>
+              <div class="dot green"></div>
+            </div>
+            <div class="terminal-title">bash — usage demo</div>
+          </div>
+          <div class="terminal-body" style="font-size:.8rem">
+            <div class="t-gray"># Launch with either command:</div>
+            <div><span class="t-prompt"></span><span class="t-amber">camel-downloader</span></div>
+            <div>&nbsp;</div>
+            <div class="t-amber">════════════════════════════════════</div>
+            <div class="t-amber">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; camelDownloader 🐫</div>
+            <div class="t-amber">════════════════════════════════════</div>
+            <div>&nbsp;</div>
+            <div><span class="t-blue">🔗 Enter YouTube URL:</span></div>
+            <div class="t-txt">&nbsp; https://youtu.be/dQw4w9WgXcQ</div>
+            <div>&nbsp;</div>
+            <div class="t-gray">────────────────────────────────────</div>
+            <div><span class="t-amber">📊 SELECT QUALITY:</span></div>
+            <div class="t-gray">────────────────────────────────────</div>
+            <div class="t-txt">1) 360p  - SD       (Small, fast)</div>
+            <div class="t-txt">2) 720p  - HD       (Balanced)</div>
+            <div class="t-txt">3) 1080p - Full HD  (High quality)</div>
+            <div class="t-txt">4) 1440p - 2K       (Very high)</div>
+            <div class="t-txt">5) 2160p - 4K       (Maximum)</div>
+            <div class="t-txt">6) Best  - Auto     (Auto-pick)</div>
+            <div class="t-txt">7) Audio - MP3      (Sound only)</div>
+            <div class="t-gray">────────────────────────────────────</div>
+            <div>&nbsp;</div>
+            <div><span class="t-blue">👉 Your choice (1-7):</span> <span class="t-amber">7</span></div>
+            <div><span class="t-green">✅ Selected:</span> <span class="t-txt">Audio Only (MP3)</span></div>
+            <div>&nbsp;</div>
+            <div class="t-txt">⬇️&nbsp; 100% | 3.2MB/3.2MB | <span class="t-green">Done</span></div>
+            <div class="t-green">✅ DOWNLOAD COMPLETE!</div>
+            <div><span class="t-amber">📁</span> <span class="t-txt">~/Downloads/camelDownloader</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     QUALITY OPTIONS
+══════════════════════════════════════════ -->
+<section class="section quality-bg" id="quality">
+  <div class="container">
+    <div class="section-header">
+      <h2>Quality <span class="grad">options</span></h2>
+      <p>Seven options to suit every need — from data-saving mobile downloads to pristine 4K archives.</p>
+    </div>
+    <div class="quality-grid">
+      <div class="quality-card">
+        <div class="quality-num">Option 1</div>
+        <div class="quality-res">360p</div>
+        <div class="quality-label">Standard Definition</div>
+        <div class="quality-bar"><div class="quality-fill" style="width:14%"></div></div>
+        <div class="quality-meta">
+          <span>Best for slow internet or mobile data</span>
+          <span class="quality-size">~50 MB / 10 min video</span>
+        </div>
+      </div>
+      <div class="quality-card featured">
+        <div class="quality-num">Option 2</div>
+        <div class="quality-res">720p</div>
+        <div class="quality-label">HD — Most Popular</div>
+        <div class="quality-bar"><div class="quality-fill" style="width:35%"></div></div>
+        <div class="quality-meta">
+          <span>Great balance of quality and file size</span>
+          <span class="quality-size">~150 MB / 10 min video</span>
+        </div>
+      </div>
+      <div class="quality-card">
+        <div class="quality-num">Option 3</div>
+        <div class="quality-res">1080p</div>
+        <div class="quality-label">Full HD</div>
+        <div class="quality-bar"><div class="quality-fill" style="width:55%"></div></div>
+        <div class="quality-meta">
+          <span>Desktop viewing and archiving</span>
+          <span class="quality-size">~300 MB / 10 min video</span>
+        </div>
+      </div>
+      <div class="quality-card">
+        <div class="quality-num">Option 4</div>
+        <div class="quality-res">1440p</div>
+        <div class="quality-label">2K — Very High</div>
+        <div class="quality-bar"><div class="quality-fill" style="width:72%"></div></div>
+        <div class="quality-meta">
+          <span>Large monitors, professional use</span>
+          <span class="quality-size">~600 MB / 10 min video</span>
+        </div>
+      </div>
+      <div class="quality-card">
+        <div class="quality-num">Option 5</div>
+        <div class="quality-res">2160p</div>
+        <div class="quality-label">4K — Maximum</div>
+        <div class="quality-bar"><div class="quality-fill" style="width:100%"></div></div>
+        <div class="quality-meta">
+          <span>4K displays, video editing, archives</span>
+          <span class="quality-size">~1.5 GB / 10 min video</span>
+        </div>
+      </div>
+      <div class="quality-card">
+        <div class="quality-num">Option 6</div>
+        <div class="quality-res">Best</div>
+        <div class="quality-label">Auto — Let YouTube decide</div>
+        <div class="quality-bar"><div class="quality-fill" style="width:100%;background:linear-gradient(90deg,var(--purple),var(--blue))"></div></div>
+        <div class="quality-meta">
+          <span>Downloads the highest quality available</span>
+          <span class="quality-size">Varies by video</span>
+        </div>
+      </div>
+      <div class="quality-card" style="position:relative">
+        <div class="tag-audio">Audio</div>
+        <div class="quality-num">Option 7</div>
+        <div class="quality-res">MP3</div>
+        <div class="quality-label">Audio Only — 192kbps</div>
+        <div class="quality-bar"><div class="quality-fill" style="width:18%;background:linear-gradient(90deg,#22c55e,var(--green))"></div></div>
+        <div class="quality-meta">
+          <span>Music, podcasts, lectures, sound-only</span>
+          <span class="quality-size" style="color:var(--green)">~25 MB / 10 min video</span>
+        </div>
+      </div>
+    </div>
+    <p style="text-align:center;color:var(--txt3);font-size:.82rem;margin-top:20px">File sizes are estimates. Actual sizes depend on video content and YouTube's encoding.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     DOWNLOAD LOCATIONS
+══════════════════════════════════════════ -->
+<section class="section" id="locations">
+  <div class="container">
+    <div class="section-header">
+      <h2>Where do <span class="grad">downloads go?</span></h2>
+      <p>Files are saved automatically. You never need to choose a folder.</p>
+    </div>
+    <div class="locations-grid">
+      <div class="location-card">
+        <div class="location-os">
+          <span class="location-os-icon">🐧</span>
+          <span class="location-os-name">Linux</span>
+        </div>
+        <p style="font-size:.875rem;color:var(--txt2);margin-bottom:8px">Saved to your home Downloads folder under a dedicated subfolder:</p>
+        <div class="location-path">
+          <code>~/Downloads/camelDownloader/</code>
+          <button class="location-copy" onclick="copyText('~/Downloads/camelDownloader/',this)" title="Copy">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="location-card">
+        <div class="location-os">
+          <span class="location-os-icon">🍎</span>
+          <span class="location-os-name">macOS</span>
+        </div>
+        <p style="font-size:.875rem;color:var(--txt2);margin-bottom:8px">Same as Linux — uses your home directory Downloads folder:</p>
+        <div class="location-path">
+          <code>~/Downloads/camelDownloader/</code>
+          <button class="location-copy" onclick="copyText('~/Downloads/camelDownloader/',this)" title="Copy">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="location-card">
+        <div class="location-os">
+          <span class="location-os-icon">📱</span>
+          <span class="location-os-name">Android (Termux)</span>
+        </div>
+        <p style="font-size:.875rem;color:var(--txt2);margin-bottom:8px">Visible in the Android <strong>Files app → Downloads</strong> after running <code style="color:var(--amber);font-size:.8rem">termux-setup-storage</code>:</p>
+        <div class="location-path">
+          <code>~/storage/downloads/camelDownloader/</code>
+          <button class="location-copy" onclick="copyText('~/storage/downloads/camelDownloader/',this)" title="Copy">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="location-card">
+        <div class="location-os">
+          <span class="location-os-icon">🪟</span>
+          <span class="location-os-name">Windows</span>
+        </div>
+        <p style="font-size:.875rem;color:var(--txt2);margin-bottom:8px">Saved to your user profile's Downloads folder:</p>
+        <div class="location-path">
+          <code>C:\Users\YourName\Downloads\camelDownloader\</code>
+          <button class="location-copy" onclick="copyText('C:\\Users\\YourName\\Downloads\\camelDownloader\\',this)" title="Copy">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     TROUBLESHOOTING
+══════════════════════════════════════════ -->
+<section class="section trouble-bg" id="troubleshoot">
+  <div class="container">
+    <div class="section-header">
+      <h2>Troubleshooting <span class="grad">&amp; FAQ</span></h2>
+      <p>Answers to the most common issues. Click any question to expand it.</p>
+    </div>
+    <div class="accordion">
+
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span class="accordion-q"><code style="color:var(--red);font-size:.9rem">camel-downloader: command not found</code></span>
+          <span class="accordion-icon">+</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            The command is installed but not on your PATH. Run these commands to fix it:
+            <div class="code-block" style="margin-top:12px">
+              <div class="code-header"><span class="code-label">Linux / macOS</span><button class="copy-btn" onclick="copyCode(this);event.stopPropagation()"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+              <pre><span class="cmd">mkdir -p ~/.local/bin</span>
+<span class="cmd">ln -sf $(which camel-downloader) ~/.local/bin/camel-downloader</span>
+<span class="cmd">echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc</span>
+<span class="cmd">source ~/.bashrc</span></pre>
+            </div>
+            On Android (Termux) this shouldn't happen after a successful <code>pip install</code>. Try closing and reopening Termux.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span class="accordion-q"><code style="color:var(--red);font-size:.9rem">ffmpeg not installed</code> error</span>
+          <span class="accordion-icon">+</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            FFmpeg is required to merge video and audio streams for HD content. Install it for your platform:
+            <div class="code-block" style="margin-top:12px">
+              <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this);event.stopPropagation()"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+              <pre><span class="comment"># Ubuntu / Debian</span>
+<span class="cmd">sudo apt install ffmpeg</span>
+<span class="comment"># macOS</span>
+<span class="cmd">brew install ffmpeg</span>
+<span class="comment"># Android (Termux)</span>
+<span class="cmd">pkg install ffmpeg</span>
+<span class="comment"># Windows (via winget)</span>
+<span class="cmd">winget install Gyan.FFmpeg -e</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span class="accordion-q">Download fails with a 403 error or yt-dlp error</span>
+          <span class="accordion-icon">+</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            yt-dlp is likely outdated. YouTube regularly changes how it serves videos and yt-dlp releases frequent updates to keep up. Update it:
+            <div class="code-block" style="margin-top:12px">
+              <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this);event.stopPropagation()"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+              <pre><span class="cmd">pip install -U yt-dlp</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span class="accordion-q"><code style="color:var(--red);font-size:.9rem">termux-setup-storage</code> keeps failing on Android</span>
+          <span class="accordion-icon">+</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            This is a known Termux issue. Try the following:
+            <ul style="margin-top:10px;padding-left:20px;display:flex;flex-direction:column;gap:6px">
+              <li>Run <code style="color:var(--amber)">termux-setup-storage</code> again and tap <strong>Allow</strong> when the Android permission popup appears.</li>
+              <li>If the popup never appears, go to Android Settings → Apps → Termux → Permissions → Files and Media → Allow.</li>
+              <li>If it still fails, your downloads will still work — they just save to Termux's internal folder (<code style="color:var(--amber)">~/downloads/</code>) instead of the public Downloads folder.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span class="accordion-q">The video says it's age-restricted or private</span>
+          <span class="accordion-icon">+</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            Age-restricted and private videos require YouTube authentication via cookies. This is an advanced use case — open an issue on the <a href="https://github.com/troubleman96/camelDownloader-/issues" style="color:var(--amber)" target="_blank" rel="noopener">GitHub repository</a> with the video URL and we can help you set it up with a <code>cookies.txt</code> file.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span class="accordion-q">Disk full or permission denied errors</span>
+          <span class="accordion-icon">+</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <ul style="padding-left:20px;display:flex;flex-direction:column;gap:6px">
+              <li><strong>Disk full:</strong> Check available storage with <code style="color:var(--amber)">df -h</code> (Linux/macOS) or check in Settings on Android/Windows. Free up space and retry.</li>
+              <li><strong>Permission denied:</strong> On Android, run <code style="color:var(--amber)">termux-setup-storage</code> and grant the permission. On Linux/macOS, check that your Downloads folder is writable.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span class="accordion-q">How do I update camelDownloader to the latest version?</span>
+          <span class="accordion-icon">+</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <div class="code-block">
+              <div class="code-header"><span class="code-label">bash</span><button class="copy-btn" onclick="copyCode(this);event.stopPropagation()"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+              <pre><span class="cmd">pip install -U camelDownloader</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span class="accordion-q">The download finished but there's no audio in the video</span>
+          <span class="accordion-icon">+</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            FFmpeg is likely missing or not on PATH. YouTube stores HD video and audio separately — FFmpeg is required to merge them. Install FFmpeg for your platform (see the Troubleshooting item above), then retry the download. You may need to delete the partial file first.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     CONTRIBUTING
+══════════════════════════════════════════ -->
+<section class="section" id="contribute">
+  <div class="container">
+    <div class="section-header">
+      <h2>Open source &amp; <span class="grad">community-driven</span></h2>
+      <p>camelDownloader is MIT licensed. Contributions, bug reports, and feature requests are all welcome.</p>
+    </div>
+    <div class="contrib-grid">
+      <div class="contrib-card">
+        <div class="contrib-icon">🐛</div>
+        <h3>Report a Bug</h3>
+        <p>Found something broken? Open an issue on GitHub with the video URL and the error message you see.</p>
+        <a href="https://github.com/troubleman96/camelDownloader-/issues" target="_blank" rel="noopener">Open an Issue →</a>
+      </div>
+      <div class="contrib-card">
+        <div class="contrib-icon">💡</div>
+        <h3>Request a Feature</h3>
+        <p>Have an idea for an improvement? Suggest it via a GitHub issue. All ideas are considered.</p>
+        <a href="https://github.com/troubleman96/camelDownloader-/issues" target="_blank" rel="noopener">Suggest a Feature →</a>
+      </div>
+      <div class="contrib-card">
+        <div class="contrib-icon">🔀</div>
+        <h3>Submit a Pull Request</h3>
+        <p>Fork the repo, make your changes in editable mode, and open a PR. See the README for contribution steps.</p>
+        <a href="https://github.com/troubleman96/camelDownloader-" target="_blank" rel="noopener">View on GitHub →</a>
+      </div>
+    </div>
+    <div class="code-block" style="margin-top:32px;max-width:700px;margin-left:auto;margin-right:auto">
+      <div class="code-header"><span class="code-label">Quick contribute</span><button class="copy-btn" onclick="copyCode(this)"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button></div>
+      <pre><span class="comment"># Fork the repo on GitHub, then:</span>
+<span class="cmd">git clone https://github.com/YOUR_USERNAME/camelDownloader-.git</span>
+<span class="cmd">cd camelDownloader-</span>
+<span class="cmd">pip install -e .</span>
+<span class="cmd">git checkout -b my-feature</span>
+<span class="comment"># make your changes...</span>
+<span class="cmd">git add . && git commit -m "describe your change"</span>
+<span class="cmd">git push origin my-feature</span>
+<span class="comment"># then open a Pull Request on GitHub</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <span style="font-size:1.4rem">🐫</span>
+          <span>camelDownloader</span>
+        </div>
+        <p>Free, open-source YouTube downloader for Linux, macOS, Android (Termux), and Windows. Powered by yt-dlp.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how">How It Works</a></li>
+          <li><a href="#install">Installation</a></li>
+          <li><a href="#usage">Usage</a></li>
+          <li><a href="#quality">Quality Options</a></li>
+          <li><a href="#troubleshoot">Troubleshooting</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Links</h4>
+        <ul>
+          <li><a href="https://github.com/troubleman96/camelDownloader-" target="_blank" rel="noopener">GitHub Repository</a></li>
+          <li><a href="https://github.com/troubleman96/camelDownloader-/issues" target="_blank" rel="noopener">Report a Bug</a></li>
+          <li><a href="https://pypi.org/project/camelDownloader/" target="_blank" rel="noopener">PyPI Package</a></li>
+          <li><a href="https://github.com/yt-dlp/yt-dlp" target="_blank" rel="noopener">yt-dlp (engine)</a></li>
+          <li><a href="https://f-droid.org/en/packages/com.termux/" target="_blank" rel="noopener">Termux on F-Droid</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 camelDownloader — MIT License. Free to use, modify, and distribute.</span>
+      <div class="footer-badges">
+        <span class="badge">Python 3.8+</span>
+        <span class="badge">MIT License</span>
+        <span class="badge">v2.1.1</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── Mobile Menu ──
+function toggleMenu(){
+  document.getElementById('hamburger').classList.toggle('open');
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+function closeMenu(){
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+
+// ── OS Tabs ──
+function switchTab(os){
+  document.querySelectorAll('.os-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.os-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-'+os).classList.add('active');
+  document.getElementById('panel-'+os).classList.add('active');
+}
+
+// ── Accordion ──
+function toggleAccordion(item){
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.accordion-item.open').forEach(i => i.classList.remove('open'));
+  if(!wasOpen) item.classList.add('open');
+}
+
+// ── Copy Code ──
+function copyCode(btn){
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Copied!';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copyText(text, btn){
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+    setTimeout(()=>{ btn.innerHTML = orig; }, 2000);
+  });
+}
+
+// ── Smooth scroll + nav close ──
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const id = a.getAttribute('href').slice(1);
+    if(!id) return;
+    const el = document.getElementById(id);
+    if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); closeMenu(); }
+  });
+});
+
+// ── Nav scroll highlight ──
+const sections = ['hero','features','how','install','usage','quality','locations','troubleshoot','contribute'];
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', ()=>{
+  const y = window.scrollY + 120;
+  sections.forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(y >= el.offsetTop && y < el.offsetTop + el.offsetHeight){
+      navLinks.forEach(l=>l.style.color='');
+      const active = document.querySelector(`.nav-links a[href="#${id}"]`);
+      if(active) active.style.color = 'var(--amber)';
+    }
+  });
+}, {passive:true});
+</script>
+</body>
+</html>
